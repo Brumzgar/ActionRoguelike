@@ -4,6 +4,7 @@
 #include "SCharacter.h"
 #include "../../../../../../../Source/Runtime/Engine/Classes/GameFramework/SpringArmComponent.h"
 #include "../../../../../../../Source/Runtime/Engine/Classes/Camera/CameraComponent.h"
+#include "../../../../../../../Source/Runtime/Engine/Classes/GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -12,11 +13,16 @@ ASCharacter::ASCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
+	SpringArmComp->bUsePawnControlRotation = true;
 	SpringArmComp->SetupAttachment(RootComponent);
 	
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	bUseControllerRotationYaw = false; // 'b' at the front because its boolean
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 }
 
@@ -25,12 +31,6 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void ASCharacter::MoveForward(float Value)
-{
-	AddMovementInput(GetActorForwardVector(), Value);
-
 }
 
 // Called every frame
@@ -46,8 +46,33 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &ASCharacter::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ASCharacter::MoveRight);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 
 }
 
+void ASCharacter::MoveForward(float Value)
+{
+	FRotator ControllerRotation = GetControlRotation();
+	ControllerRotation.Pitch = 0.0f;
+	ControllerRotation.Roll = 0.0f;
+
+	AddMovementInput(ControllerRotation.Vector(), Value);
+
+	//AddMovementInput(GetActorForwardVector(), Value);
+}
+
+void ASCharacter::MoveRight(float Value)
+{
+	FRotator ControllerRotation = GetControlRotation();
+	ControllerRotation.Pitch = 0.0f;
+	ControllerRotation.Roll = 0.0f;
+
+	FVector RightVector = FRotationMatrix(ControllerRotation).GetScaledAxis(EAxis::Y);
+
+	AddMovementInput(RightVector, Value);
+
+	//AddMovementInput(GetActorRightVector(), Value);
+}
