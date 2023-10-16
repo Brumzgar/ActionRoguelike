@@ -12,7 +12,6 @@ AExplosiveBarrel::AExplosiveBarrel()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//StaticMeshComp->OnComponentHit.AddDynamic(this,&AExplosiveBarrel::BarrelExplode());
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComp");
 	StaticMeshComp->SetSimulatePhysics(true);
 	RootComponent = StaticMeshComp;
@@ -21,7 +20,7 @@ AExplosiveBarrel::AExplosiveBarrel()
 	ForceComp->SetupAttachment(StaticMeshComp);
 	ForceComp->SetAutoActivate(false);
 
-	ForceComp->Radius = 750.0f;
+	ForceComp->Radius = 7500.0f;
 	ForceComp->ImpulseStrength = 2500.0f; // Alternative: 200000.0 if bImpulseVelChange = false
 	ForceComp->bImpulseVelChange = true;
 }
@@ -31,7 +30,10 @@ void AExplosiveBarrel::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	StaticMeshComp->OnComponentHit.AddDynamic(this, &AExplosiveBarrel::OnActorHit);
+	
 }
+
 
 // Called every frame
 void AExplosiveBarrel::Tick(float DeltaTime)
@@ -40,9 +42,9 @@ void AExplosiveBarrel::Tick(float DeltaTime)
 
 }
 
-void AExplosiveBarrel::BarrelExplode() 
+void AExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//ForceComp->FireImpulse();
-
+	ForceComp->FireImpulse();
+	Destroy(true);
 }
 
