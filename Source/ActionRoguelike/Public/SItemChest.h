@@ -14,15 +14,10 @@ class ACTIONROGUELIKE_API ASItemChest : public AActor, public ISGameplayInterfac
 
 public:
 
-
 	UPROPERTY(EditAnywhere)
 	float TargetPitch;
 
-	void Interact_Implementation(APawn* PlayerPawn);
-	
-public:	
-	// Sets default values for this actor's properties
-	ASItemChest();
+	void Interact_Implementation(APawn* InstigatorPawn);
 
 protected:
 
@@ -40,4 +35,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	// Sets default values for this actor's properties
+	ASItemChest();
 };
