@@ -25,6 +25,8 @@ ASCharacter::ASCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	bUseControllerRotationYaw = false; // 'b' at the front because its boolean
+
+	AttackDelay = 0.2f;
 }
 
 // Called when the game starts or when spawned
@@ -84,6 +86,23 @@ void ASCharacter::MoveRight(float Value)
 }
 
 void ASCharacter::PrimaryAttack()
+{
+	PlayAnimMontage(AttackAnim);
+
+	GetWorldTimerManager().SetTimer(TimerHandle_PrimaryAttack, this, &ASCharacter::PrimaryAttack_TimeElapsed, AttackDelay);
+
+	// GetWorldTimerManager().ClearTimer(TimerHandle_PrimaryAttack); // Function used to clear it if our character were to die?
+
+	/*FVector RightHandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+	FTransform SpawnTransformMatrix = FTransform(GetControlRotation(), RightHandLocation);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTransformMatrix, SpawnParams);*/ // Moved to ASCharacter::PrimaryAttack_TimeElapsed() as an Attack with delay
+}
+
+void ASCharacter::PrimaryAttack_TimeElapsed()
 {
 	FVector RightHandLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 	FTransform SpawnTransformMatrix = FTransform(GetControlRotation(), RightHandLocation);
