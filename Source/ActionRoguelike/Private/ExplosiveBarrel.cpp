@@ -42,11 +42,11 @@ void AExplosiveBarrel::Tick(float DeltaTime)
 
 }
 
-//void AExplosiveBarrel::Explode()
-//{
-//	ForceComp->FireImpulse();
-//	Destroy(true);
-//}
+void AExplosiveBarrel::Interact_Implementation(APawn* InstigatorPawn)
+{
+	ForceComp->FireImpulse();
+	Destroy(true);
+}
 
 void AExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {

@@ -4,19 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SGameplayInterface.h"
 #include "ExplosiveBarrel.generated.h"
 
 class UStaticMeshComponent;
 class URadialForceComponent;
 
 UCLASS()
-class ACTIONROGUELIKE_API AExplosiveBarrel : public AActor
+class ACTIONROGUELIKE_API AExplosiveBarrel : public AActor, public ISGameplayInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
 	AExplosiveBarrel();
+
+	void Interact_Implementation(APawn* InstigatorPawn);
 
 protected:
 	// Called when the game starts or when spawned
@@ -36,9 +39,5 @@ protected:
 public:		
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	/*UFUNCTION(BluePrintCallable, BlueprintNativeEvent)
-	void Explode();*/
-
 
 };
